@@ -54,13 +54,14 @@ module.exports = (useraccountService, listService, itemService, partageService) 
             }
         }
         try {
-            await itemService.dao.db.query("CREATE TABLE item(id_item SERIAL PRIMARY KEY, label TEXT, quantity NUMERIC, checked BOOLEAN, contains INT REFERENCES list(id_list) ON DELETE CASCADE)")
+            await itemService.dao.db.query("CREATE TABLE item(id_item SERIAL PRIMARY KEY, label TEXT, quantity NUMERIC, checked BOOLEAN, contains INT REFERENCES list(id_list) ON DELETE CASCADE, fk_id_user INT REFERENCES useraccount(id_user) ON DELETE CASCADE)")
             // INSERTs
+                await itemService.dao.insert(new Item("Test",10,false,1,1))
             for (let j = 0; j < 2; j++) {
-                await itemService.dao.insert(new Item("list1label" + j, 15 + j, false, 1))
+                await itemService.dao.insert(new Item("list1label" + j, 15 + j, false, 1,1))
             }
             for (let k = 0; k < 2; k++) {
-                await itemService.dao.insert(new Item("list2label" + k, 25 + k, false, 2))
+                await itemService.dao.insert(new Item("list2label" + k, 25 + k, false, 2,2))
             }
         } catch (err) {
             if (err.code === "42P07") { // TABLE ALREADY EXISTS https://www.postgresql.org/docs/8.2/errcodes-appendix.html

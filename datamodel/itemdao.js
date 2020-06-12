@@ -5,8 +5,8 @@ module.exports = class ItemDAO extends BaseDAO {
         super(db, "item")
     }
     insert(item) {
-        return this.db.query("INSERT INTO item(label,quantity,checked,contains) VALUES ($1,$2,$3,$4)",
-            [item.label, item.quantity, item.checked, item.contains])
+        return this.db.query("INSERT INTO item(label,quantity,checked,contains,fk_id_user) VALUES ($1,$2,$3,$4,$5)",
+            [item.label, item.quantity, item.checked, item.contains, item.fk_id_user])
     }
     getAll(list) {
         return new Promise((resolve, reject) =>

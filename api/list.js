@@ -5,7 +5,7 @@ module.exports = (app, serviceList, jwt) => {
     app.get("/list/archived", jwt.validateJWT, async (req, res) => {
         await res.json(await serviceList.dao.getAllArchived(req.useraccount))
     })
-    app.get("/list/current", jwt.validateJWT,async (req, res) => {
+    app.get("/list/current", jwt.validateJWT, async (req, res) => {
         await res.json(await serviceList.dao.getAllCurrent(req.useraccount))
     })
     app.get("/list/max", async (req, res) => {
