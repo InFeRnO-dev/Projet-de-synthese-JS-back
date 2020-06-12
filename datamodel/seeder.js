@@ -1,13 +1,26 @@
 const Useraccount = require('./useraccount')
 const List = require('./list')
 const Item = require('./item')
+const Partage = require('./partage')
 
 
-module.exports = (useraccountService, listService, itemService) => {
+module.exports = (useraccountService, listService, itemService, partageService) => {
     return new Promise(async (resolve, reject) => {
         try {
             await useraccountService.dao.db.query("CREATE TABLE useraccount(id_user SERIAL PRIMARY KEY, login TEXT, password TEXT)")
             // INSERTs
+            useraccountService.inserthash("user0", "default")
+                .then(_ => useraccountService.dao.getByLogin("user0"))
+                .catch(e => console.log(e))
+            useraccountService.inserthash("user1", "default")
+                .then(_ => useraccountService.dao.getByLogin("user1"))
+                .catch(e => console.log(e))
+            useraccountService.inserthash("user2", "default")
+                .then(_ => useraccountService.dao.getByLogin("user2"))
+                .catch(e => console.log(e))
+            useraccountService.inserthash("user3", "default")
+                .then(_ => useraccountService.dao.getByLogin("user3"))
+                .catch(e => console.log(e))
 
         } catch (e) {
             if (e.code === "42P07") { // TABLE ALREADY EXISTS https://www.postgresql.org/docs/8.2/errcodes-appendix.html
@@ -18,20 +31,19 @@ module.exports = (useraccountService, listService, itemService) => {
                 console.log(e)
             }
         }
-            useraccountService.inserthash("user0", "default")
-                .then(_ => useraccountService.dao.getByLogin("user0"))
-                .catch(e => console.log(e))
-            useraccountService.inserthash("user1", "default")
-                .then(_ => useraccountService.dao.getByLogin("user1"))
-                .catch(e => console.log(e))
+
 
         try {
             await listService.dao.db.query("CREATE TABLE list(id_list SERIAL PRIMARY KEY, shop TEXT, date DATE, archived BOOLEAN, fk_id_user INT REFERENCES useraccount(id_user) ON DELETE CASCADE)")
             // INSERTs
             await listService.dao.insert(new List("shop1", new Date(), false, 1))
-            await listService.dao.insert(new List("shop3", new Date(), true, 1))
-            await listService.dao.insert(new List("shop2", new Date(), false, 2))
+            await listService.dao.insert(new List("shop2", new Date(), true, 1))
+            await listService.dao.insert(new List("shop3", new Date(), false, 2))
             await listService.dao.insert(new List("shop4", new Date(), true, 2))
+            await listService.dao.insert(new List("shop5", new Date(), false, 3))
+            await listService.dao.insert(new List("shop6", new Date(), true, 3))
+            await listService.dao.insert(new List("shop7", new Date(), false, 4))
+            await listService.dao.insert(new List("shop8", new Date(), true, 4))
         } catch (e) {
             if (e.code === "42P07") { // TABLE ALREADY EXISTS https://www.postgresql.org/docs/8.2/errcodes-appendix.html
                 resolve()
@@ -57,6 +69,20 @@ module.exports = (useraccountService, listService, itemService) => {
             } else {
                 reject(err)
                 console.log(err)
+            }
+        }
+        try {
+            await partageService.dao.db.query("CREATE TABLE partage(id_partage SERIAL PRIMARY KEY, id_proprio INT REFERENCES useraccount(id_user) ON DELETE CASCADE, id_partage_user INT REFERENCES useraccount(id_user) ON DELETE CASCADE, id_list INT REFERENCES list(id_list) ON DELETE CASCADE, droits INT)")
+            // INSERTs
+            await partageService.dao.insert(new Partage(1,2, 1, 1))
+
+        } catch (e) {
+            if (e.code === "42P07") { // TABLE ALREADY EXISTS https://www.postgresql.org/docs/8.2/errcodes-appendix.html
+                resolve()
+                console.log("table partage déjà créé")
+            } else {
+                reject(e)
+                console.log(e)
             }
         }
     })

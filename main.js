@@ -7,6 +7,7 @@ const morgan = require('morgan')
 const UseraccountService = require("./services/useraccount")
 const ListService = require("./services/list")
 const ItemService = require("./services/item")
+const PartageService = require("./services/partage")
 
 
 const app = express()
@@ -21,12 +22,14 @@ const db = new pg.Pool({ connectionString: connectionString })
 const useraccountService = new UseraccountService(db)
 const listService = new ListService(db)
 const itemService = new ItemService(db)
+const partageService = new PartageService(db)
 const jwt = require('./jwt')(useraccountService)
 
 require('./api/useraccount')(app, useraccountService, jwt)
 require('./api/list')(app, listService, jwt)
 require('./api/item')(app, itemService, jwt)
+require('./api/partage')(app, partageService, listService, jwt)
 
-require('./datamodel/seeder')(useraccountService, listService, itemService)
+require('./datamodel/seeder')(useraccountService, listService, itemService, partageService)
     .then(app.listen(3333))
 
